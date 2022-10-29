@@ -1,9 +1,9 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import * as tf from "@tensorflow/tfjs";
 
 import "@tensorflow/tfjs-react-native";
-import "@tensorflow/tfjs-backend-webgl";
-import "@tensorflow/tfjs-backend-cpu";
+import "expo-gl";
+import "expo-gl-cpp";
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
 
 interface Props {
@@ -36,6 +36,16 @@ const ModelProvider: React.FC<Props> = ({ children }) => {
   return (
     <ModelContext.Provider value={model}>{children}</ModelContext.Provider>
   );
+};
+
+export const useModel = () => {
+  const context = useContext(ModelContext);
+
+  if (context) {
+    return context;
+  }
+
+  console.error("useModel hook can only be used inside ModelProvider");
 };
 
 export default ModelProvider;

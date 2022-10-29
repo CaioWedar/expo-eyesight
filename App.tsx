@@ -8,6 +8,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import "./src/i18n";
 import ModelProvider from "./src/hooks/useModel";
 import WelcomeScreen from "./src/screens/Welcome";
+import CameraScreen from "./src/screens/Camera";
 
 export type RootStackNavigatorParams = {
   Welcome: undefined;
@@ -31,7 +32,7 @@ export default function App() {
             }}
           >
             <Stack.Screen name="Welcome" component={WelcomeScreen} />
-            {/* <Stack.Screen name="Camera" component={CameraScreen} /> */}
+            <Stack.Screen name="Camera" component={CameraScreen} />
           </Stack.Navigator>
         </ModelProvider>
       </SafeAreaProvider>
