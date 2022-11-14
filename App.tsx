@@ -1,14 +1,14 @@
-import "react-native-gesture-handler";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { StatusBar } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { StatusBar } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-import "./src/i18n";
-import ModelProvider from "./src/hooks/useModel";
-import WelcomeScreen from "./src/screens/Welcome";
-import CameraScreen from "./src/screens/Camera";
+import './src/i18n';
+import ModelProvider from './src/hooks/useModel';
+import WelcomeScreen from './src/screens/Welcome';
+import CameraScreen from './src/screens/Camera';
 
 export type RootStackNavigatorParams = {
   Welcome: undefined;
@@ -17,6 +17,7 @@ export type RootStackNavigatorParams = {
 
 export default function App() {
   const Stack = createStackNavigator();
+
   return (
     <NavigationContainer>
       <SafeAreaProvider>
