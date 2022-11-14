@@ -1,9 +1,10 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Platform, StatusBar } from 'react-native';
+import { StatusBar } from 'react-native';
 import { useModel } from '../../hooks/useModel';
 import { Tensor3D } from '@tensorflow/tfjs-core';
-import * as Speech from 'expo-speech';
+import * as SpeechService from '../../services/speech';
+import * as ObjectDetectionService from '../../services/objectDetection';
 
 import * as S from './CameraScreen.styles';
 
@@ -22,29 +23,18 @@ const CameraScreen = () => {
     }, [])
   );
 
-  const runCoco = (images: IterableIterator<Tensor3D>) => {
-    const detectInSnapshot = async () => {
-      if (!model) {
-        throw new Error('No model');
-      }
-      const nextImageTensor = images.next().value;
-
-      if (!nextImageTensor) {
-        throw new Error('No image tensor');
-      }
-
-      const predictions = await model.detect(nextImageTensor);
+  const runCoco = async (images: IterableIterator<Tensor3D>) => {
+    try {
+      const predictions = await ObjectDetectionService.detectInSnapshot(
+        images,
+        model
+      );
 
       predictions.forEach((prediction) => {
         if (prediction.score > 0.8) {
-          Speech.speak(prediction.class);
+          SpeechService.speak(prediction.class);
         }
       });
-
-      setTimeout(detectInSnapshot, 5000);
-    };
-    try {
-      detectInSnapshot();
     } catch (err) {
       if (err instanceof Error) {
         console.error(err);
@@ -52,26 +42,13 @@ const CameraScreen = () => {
     }
   };
 
-  let textureDims;
-  if (Platform.OS === 'ios') {
-    textureDims = {
-      height: 1920,
-      width: 1080,
-    };
-  } else {
-    textureDims = {
-      height: 1200,
-      width: 1600,
-    };
-  }
-
   return (
     <>
       <StatusBar hidden />
       {isCameraActive && (
         <S.StyledCamera
-          cameraTextureHeight={textureDims.height}
-          cameraTextureWidth={textureDims.width}
+          cameraTextureHeight={ObjectDetectionService.textureDims.height}
+          cameraTextureWidth={ObjectDetectionService.textureDims.width}
           resizeDepth={3}
           resizeWidth={152}
           resizeHeight={200}
