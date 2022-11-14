@@ -8,6 +8,6 @@ const TensorCamera = cameraWithTensors(Camera);
 export const StyledCamera = styled(TensorCamera).attrs({
   type: CameraType.back,
 })`
-  width: ${Dimensions.get('window').width};
-  height: ${Dimensions.get('window').height - 200};
+  width: ${Dimensions.get('window').width}px;
+  height: ${Dimensions.get('window').height - 250}px;
 `;
