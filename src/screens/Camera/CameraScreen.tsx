@@ -1,69 +1,59 @@
-import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
-import { Linking, Platform, StatusBar, StyleSheet } from "react-native";
-import { Camera, CameraType, PermissionStatus } from "expo-camera";
-import { cameraWithTensors } from "@tensorflow/tfjs-react-native";
-import { useModel } from "../../hooks/useModel";
-import { Tensor3D } from "@tensorflow/tfjs-core";
-import * as Speech from "expo-speech";
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { Platform, StatusBar } from 'react-native';
+import { useModel } from '../../hooks/useModel';
+import { Tensor3D } from '@tensorflow/tfjs-core';
+import * as Speech from 'expo-speech';
 
-const TensorCamera = cameraWithTensors(Camera);
+import * as S from './CameraScreen.styles';
 
 const CameraScreen = () => {
-  const navigation = useNavigation();
-
   const model = useModel();
 
   const [isCameraActive, setIsCameraActive] = useState(false);
 
-  useEffect(() => {
-    const authorizeCamera = async () => {
-      const { status } = await Camera.getCameraPermissionsAsync();
-      if (status === PermissionStatus.DENIED) {
-        const { status: newStatus } =
-          await Camera.requestCameraPermissionsAsync();
-        if (newStatus !== PermissionStatus.GRANTED) {
-          Linking.openSettings();
-          navigation.goBack();
-        } else {
-          setIsCameraActive(true);
-        }
-      } else if (status === PermissionStatus.GRANTED) {
-        setIsCameraActive(true);
-      }
-    };
-    authorizeCamera().catch((err) => {
-      console.error(err);
-    });
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsCameraActive(true);
+
+      return () => {
+        setIsCameraActive(false);
+      };
+    }, [])
+  );
 
   const runCoco = (images: IterableIterator<Tensor3D>) => {
     const detectInSnapshot = async () => {
       if (!model) {
-        throw new Error("No model");
+        throw new Error('No model');
       }
       const nextImageTensor = images.next().value;
 
       if (!nextImageTensor) {
-        throw new Error("No image tensor");
+        throw new Error('No image tensor');
       }
 
-      console.error("detecting objects");
-      model.detect(nextImageTensor).then((predictions) => {
-        if (predictions[0].score > 0.8) {
-          Speech.speak(predictions[0].class);
-          console.error(predictions[0].class);
-          console.error(predictions[0].score);
+      const predictions = await model.detect(nextImageTensor);
+
+      predictions.forEach((prediction) => {
+        if (prediction.score > 0.8) {
+          Speech.speak(prediction.class);
         }
       });
 
-      requestAnimationFrame(detectInSnapshot);
+      setTimeout(detectInSnapshot, 5000);
     };
-    detectInSnapshot();
+    try {
+      detectInSnapshot();
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error(err);
+      }
+    }
   };
 
   let textureDims;
-  if (Platform.OS === "ios") {
+  if (Platform.OS === 'ios') {
     textureDims = {
       height: 1920,
       width: 1080,
@@ -79,9 +69,7 @@ const CameraScreen = () => {
     <>
       <StatusBar hidden />
       {isCameraActive && (
-        <TensorCamera
-          style={StyleSheet.absoluteFill}
-          type={CameraType.back}
+        <S.StyledCamera
           cameraTextureHeight={textureDims.height}
           cameraTextureWidth={textureDims.width}
           resizeDepth={3}

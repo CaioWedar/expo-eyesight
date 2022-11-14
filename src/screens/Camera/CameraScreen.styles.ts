@@ -1,10 +1,13 @@
-import { Camera as VisionCamera } from "expo-camera";
-import styled from "styled-components/native";
+import styled from 'styled-components/native';
+import { Camera, CameraType } from 'expo-camera';
+import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
+import { Dimensions } from 'react-native';
 
-export const Camera = styled(VisionCamera)`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+const TensorCamera = cameraWithTensors(Camera);
+
+export const StyledCamera = styled(TensorCamera).attrs({
+  type: CameraType.back,
+})`
+  width: ${Dimensions.get('window').width};
+  height: ${Dimensions.get('window').height - 200};
 `;
