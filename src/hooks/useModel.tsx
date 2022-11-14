@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import * as tf from "@tensorflow/tfjs";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import * as tf from '@tensorflow/tfjs';
 
-import "@tensorflow/tfjs-react-native";
-import "expo-gl";
-import "expo-gl-cpp";
-import * as cocoSsd from "@tensorflow-models/coco-ssd";
+import '@tensorflow/tfjs-react-native';
+import 'expo-gl';
+import 'expo-gl-cpp';
+import * as cocoSsd from '@tensorflow-models/coco-ssd';
 
 interface Props {
   children: React.ReactNode;
@@ -18,16 +18,16 @@ const ModelProvider: React.FC<Props> = ({ children }) => {
   useEffect(() => {
     const loadModel = async () => {
       try {
-        console.error("initializing tf");
+        console.log('initializing tf');
         await tf.ready();
 
-        console.error("loading model");
+        console.log('loading model');
         const model = await cocoSsd.load();
 
         setModel(model);
-        console.error("ready to go");
+        console.log('ready to go');
       } catch (err) {
-        console.error(err, "error loading");
+        console.error(err, 'error loading');
       }
     };
     loadModel();
@@ -45,7 +45,7 @@ export const useModel = () => {
     return context;
   }
 
-  console.error("useModel hook can only be used inside ModelProvider");
+  console.error('useModel hook can only be used inside ModelProvider');
 };
 
 export default ModelProvider;
