@@ -1,8 +1,8 @@
-import { ObjectDetection } from "@tensorflow-models/coco-ssd";
-import { Tensor3D } from "@tensorflow/tfjs";
+import { ObjectDetection } from '@tensorflow-models/coco-ssd';
+import { Tensor3D } from '@tensorflow/tfjs';
 
-import { Platform } from "react-native";
-import * as SpeechService from "../services/speech";
+import { Platform } from 'react-native';
+import * as SpeechService from '../services/speech';
 
 export type ParsedDetection = {
   class: string;
@@ -15,12 +15,12 @@ export const detectInSnapshot = async (
   model?: ObjectDetection
 ) => {
   if (!model) {
-    throw new Error("No model");
+    throw new Error('No model');
   }
   const nextImageTensor = images.next().value;
 
   if (!nextImageTensor) {
-    throw new Error("No image tensor");
+    throw new Error('No image tensor');
   }
 
   const predictions = await model.detect(nextImageTensor);
@@ -45,7 +45,7 @@ export const detectInSnapshot = async (
 
   parsedPredictions.forEach((parsedPrediction) => {
     SpeechService.speak(
-      `${parsedPrediction.count > 1 ? parsedPrediction.count : ""} ${t(
+      `${parsedPrediction.count > 1 ? parsedPrediction.count : ''} ${t(
         parsedPrediction.count > 1
           ? `classes.plural.${parsedPrediction.class}`
           : `classes.singular.${parsedPrediction.class}`
@@ -57,7 +57,7 @@ export const detectInSnapshot = async (
 };
 
 export const textureDims =
-  Platform.OS === "ios"
+  Platform.OS === 'ios'
     ? {
         height: 1920,
         width: 1080,
