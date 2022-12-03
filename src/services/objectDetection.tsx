@@ -1,5 +1,7 @@
 import { ObjectDetection } from '@tensorflow-models/coco-ssd';
 import { Tensor3D } from '@tensorflow/tfjs';
+import i18n from 'i18next';
+
 import { Platform } from 'react-native';
 import * as SpeechService from '../services/speech';
 
@@ -39,13 +41,11 @@ export const detectInSnapshot = async (
     }
   });
 
-  console.log(parsedPredictions);
-
   parsedPredictions.forEach((parsedPrediction) => {
     SpeechService.speak(
-      `${parsedPrediction.count > 1 ? parsedPrediction.count : ''} ${
-        parsedPrediction.class
-      }`
+      i18n.t(`classes.${parsedPrediction.class}`, {
+        count: parsedPrediction.count,
+      })
     );
   });
 
