@@ -1,5 +1,6 @@
 import { ObjectDetection } from '@tensorflow-models/coco-ssd';
 import { Tensor3D } from '@tensorflow/tfjs';
+import i18n from 'i18next';
 
 import { Platform } from 'react-native';
 import * as SpeechService from '../services/speech';
@@ -11,7 +12,6 @@ export type ParsedDetection = {
 
 export const detectInSnapshot = async (
   images: IterableIterator<Tensor3D>,
-  t: (value: string) => string,
   model?: ObjectDetection
 ) => {
   if (!model) {
@@ -41,19 +41,15 @@ export const detectInSnapshot = async (
     }
   });
 
-  console.log(parsedPredictions);
-
   parsedPredictions.forEach((parsedPrediction) => {
     SpeechService.speak(
-      `${parsedPrediction.count > 1 ? parsedPrediction.count : ''} ${t(
-        parsedPrediction.count > 1
-          ? `classes.plural.${parsedPrediction.class}`
-          : `classes.singular.${parsedPrediction.class}`
-      )}`
+      i18n.t(`classes.${parsedPrediction.class}`, {
+        count: parsedPrediction.count,
+      })
     );
   });
 
-  setTimeout(() => detectInSnapshot(images, t, model), 5000);
+  setTimeout(() => detectInSnapshot(images, model), 5000);
 };
 
 export const textureDims =

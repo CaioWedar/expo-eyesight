@@ -10,7 +10,6 @@ import * as S from './CameraScreen.styles';
 
 const CameraScreen = () => {
   const model = useModel();
-  const { t } = useTranslation();
 
   const [isCameraActive, setIsCameraActive] = useState(false);
 
@@ -26,7 +25,7 @@ const CameraScreen = () => {
 
   const runCoco = async (images: IterableIterator<Tensor3D>) => {
     try {
-      await ObjectDetectionService.detectInSnapshot(images, t, model);
+      await ObjectDetectionService.detectInSnapshot(images, model);
     } catch (err) {
       if (err instanceof Error) {
         console.error(err);
